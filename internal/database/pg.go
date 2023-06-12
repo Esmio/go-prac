@@ -16,7 +16,7 @@ const (
 	dbname   = "mongosteen_dev"
 )
 
-func Connect() {
+func PgConnect() {
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	db, err := sql.Open("postgres", connStr)
@@ -32,7 +32,7 @@ func Connect() {
 	log.Println("Successfully connected to db")
 }
 
-func CreateTables() {
+func PgCreateTables() {
 	// users
 	_, err := DB.Exec(`CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
@@ -46,7 +46,7 @@ func CreateTables() {
 	log.Println("Successfully created users table")
 }
 
-func Close() {
+func PgClose() {
 	DB.Close()
 	log.Println("Successfully closed db")
 }
