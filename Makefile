@@ -19,4 +19,7 @@ migratedown:
 mysqlinit:
 	docker run -d --name mysql-for-go-mongosteen -p 3307:3306 -e MYSQL_DATABASE=mongosteen_dev -e MYSQL_USER=mongosteen -e MYSQL_PASSWORD=123456 -e MYSQL_ROOT_PASSWORD=123456 -v mysql-go-mongosteen-data:/var/lib/mysql mysql:8 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
+mysql:
+	docker exec -it mysql-for-go-mongosteen mysql -u mongosteen -p mongosteen_dev
+
 .PHONY: postgresinit postgres createdb dropdb migrateup migratedown mysqlinit
