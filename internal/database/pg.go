@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 const (
@@ -56,14 +56,14 @@ func Migrate() {
 	// 给 user 添加手机字段
 	_, err := DB.Exec(`ALTER TABLE users ADD COLUMN phone VARCHAR(50)`)
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
 	} else {
 		log.Println("Successfully added phone column to user table")
 	}
 
 	_, err = DB.Exec(`ALTER TABLE users ADD COLUMN address VARCHAR(150)`)
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
 	} else {
 		log.Println("Successfully added address column to user table")
 	}
@@ -77,15 +77,23 @@ func Migrate() {
 		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	)`)
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
 	} else {
 		log.Println("Successfully created items table")
+	}
+
+	// 给 users 的 email 字段添加唯一性索引
+	_, err = DB.Exec(`CREATE UNIQUE INDEX users_email_index ON users (email)`)
+	if err != nil {
+		log.Println(err)
+	} else {
+		log.Println("Successfully added unique index to email column")
 	}
 
 	_, err = DB.Exec(`ALTER TABLE items ALTER COLUMN happened_at TYPE TIMESTAMP
 	`)
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
 	} else {
 		log.Println("Successfully update happened_at to TIMESTAMP")
 	}
@@ -95,7 +103,14 @@ func Crud() {
 	// 创建一个 User
 	_, err := DB.Exec(`INSERT INTO users (email) values ('2@qq.com')`)
 	if err != nil {
-		log.Println(err)
+		switch err.(type) {
+		case *pq.Error:
+			pqErr := err.(*pq.Error)
+			log.Println(pqErr.Code.Name())
+			log.Println(pqErr.Message)
+		default:
+			log.Println(err)
+		}
 	} else {
 		log.Println("Successfully created a user")
 	}
