@@ -1,8 +1,11 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
+	"math/rand"
+	"mongosteen/config/queries"
 	"os"
 	"os/exec"
 
@@ -15,6 +18,7 @@ import (
 )
 
 var DB *sql.DB
+var DBCtx = context.Background()
 
 const (
 	host     = "localhost"
@@ -25,9 +29,17 @@ const (
 )
 
 func Connect() {
-	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-	// 	host, port, user, password, dbname)
-
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	DB = db
+	err = DB.Ping()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 type User struct {
@@ -95,6 +107,50 @@ func MigrateDown() {
 }
 
 func Crud() {
+	q := queries.New(DB)
+	// generate a random number
+	id := rand.Int()
+	u, err := q.CreateUser(DBCtx, fmt.Sprintf("%d@qq.com", id))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = q.UpdateUser(DBCtx, queries.UpdateUserParams{
+		ID:      u.ID,
+		Email:   u.Email,
+		Phone:   u.Phone,
+		Address: "Tokyo",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	users, err := q.ListUsers(DBCtx, queries.ListUsersParams{
+		Offset: 0,
+		Limit:  10,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(users)
+
+	u, err = q.FindUser(DBCtx, users[0].ID)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(u)
+	err = q.DeleteUser(DBCtx, u.ID)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	users, err = q.ListUsers(DBCtx, queries.ListUsersParams{
+		Offset: 0,
+		Limit:  10,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(users)
 }
 
 func Close() {
