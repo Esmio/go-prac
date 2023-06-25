@@ -4,21 +4,23 @@ go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-sql-driver/mysql v1.7.1
-	github.com/lib/pq v1.10.9
+	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/stretchr/testify v1.8.3
-	gorm.io/driver/postgres v1.5.2
-	gorm.io/gorm v1.25.1
 )
 
 require (
-	github.com/jackc/pgpassfile v1.0.0 // indirect
-	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
-	github.com/jackc/pgx/v5 v5.3.1 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/kr/text v0.2.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-github/v39 v39.2.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
+	github.com/lib/pq v1.10.2 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
+	golang.org/x/oauth2 v0.1.0 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 
 require (

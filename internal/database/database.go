@@ -1,15 +1,20 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
+	"os"
+	"os/exec"
+
 	"log"
 	"time"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-var DB *gorm.DB
+var DB *sql.DB
 
 const (
 	host     = "localhost"
@@ -20,22 +25,9 @@ const (
 )
 
 func Connect() {
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		DisableAutomaticPing: true,
-	})
+	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	// 	host, port, user, password, dbname)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-	DB = db
-	// err = db.Ping()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	log.Println("Successfully connected to db")
 }
 
 type User struct {
@@ -60,55 +52,51 @@ type Tag struct {
 	Name string
 }
 
-var models = []any{&User{}, &Item{}, &Tag{}}
-
-func CreateTables() {
-	for _, model := range models {
-		err := DB.Migrator().CreateTable(model)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-
-	log.Println("Successfully created users table")
-}
-
-func handleError(err error) {
+func CreateMigration(filename string) {
+	cmd := exec.Command("migrate", "create", "-ext", "sql", "-dir", "config/migrations", "-seq", filename)
+	err := cmd.Run()
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 	}
 }
 
 func Migrate() {
-	DB.AutoMigrate(models...)
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	m, err := migrate.New(
+		fmt.Sprintf("file://%s/config/migrations", dir),
+		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", user, password, host, port, dbname))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = m.Up()
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func MigrateDown() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	m, err := migrate.New(
+		fmt.Sprintf("file://%s/config/migrations", dir),
+		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", user, password, host, port, dbname))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = m.Steps(-1)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func Crud() {
-	user := User{Email: "test2@qq.com"}
-	tx := DB.Create(&user)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-	} else {
-		log.Println(tx.RowsAffected)
-	}
-	user.Phone = "111111111"
-	tx = DB.Save(&user)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-	}
-	users := []User{}
-	DB.Offset(0).Limit(3).Find(&users)
-
-	for _, u := range users {
-		log.Println(u.Phone)
-	}
 }
 
 func Close() {
-	sqlDB, err := DB.DB()
-	if err != nil {
-		log.Fatal(err)
-	}
-	sqlDB.Close()
-	log.Println("Successfully closed db")
+
 }
