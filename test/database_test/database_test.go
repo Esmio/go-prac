@@ -8,7 +8,7 @@ import (
 func BenchmarkCrud(b *testing.B) {
 	database.Connect()
 	defer database.Close()
-	// database.CreateMigration()
+	// database.CreateTables()
 	database.Migrate()
 	for i := 0; i < b.N; i++ {
 		database.Crud()
