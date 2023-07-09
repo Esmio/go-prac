@@ -1,2 +1,5 @@
 mongosteen
 .vscode
+/config.json
+/config.yaml
+/config.toml

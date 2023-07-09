@@ -1,7 +1,10 @@
 package main
 
 import (
+	"log"
 	"mongosteen/cmd"
+
+	"github.com/spf13/viper"
 )
 
 // @title           Mongosteen API
@@ -25,5 +28,12 @@ import (
 // @externalDocs.url          https://swagger.io/resources/open-api/
 
 func main() {
+	viper.SetConfigName("config")
+	viper.SetConfigType("json")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	cmd.Run()
 }
