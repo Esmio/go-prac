@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"mongosteen/internal/database"
+	"mongosteen/internal/email"
 	"mongosteen/internal/router"
 
 	"github.com/spf13/cobra"
@@ -26,6 +27,13 @@ func Run() {
 
 	dbCmd := &cobra.Command{
 		Use: "db",
+	}
+
+	emailCmd := &cobra.Command{
+		Use: "email",
+		Run: func(cmd *cobra.Command, args []string) {
+			email.Send()
+		},
 	}
 
 	createMigrationCmd := &cobra.Command{
@@ -58,7 +66,7 @@ func Run() {
 	database.Connect()
 	defer database.Close()
 
-	rootCmd.AddCommand(srvCmd, dbCmd)
+	rootCmd.AddCommand(srvCmd, dbCmd, emailCmd)
 	dbCmd.AddCommand(mgrtCmd, crudCmd, createMigrationCmd, mgrtDownCmd)
 
 	rootCmd.Execute()
