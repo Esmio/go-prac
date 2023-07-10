@@ -16,7 +16,7 @@ func TestCreateValidationCode(t *testing.T) {
 	req, _ := http.NewRequest(
 		"POST",
 		"/api/v1/validation_codes",
-		strings.NewReader(`{"email":"test@qq.com"}`),
+		strings.NewReader(`{"email":"hy44jt@gmail.com"}`),
 	)
 	req.Header.Set(
 		"Content-Type",

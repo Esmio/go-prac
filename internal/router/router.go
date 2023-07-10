@@ -1,6 +1,7 @@
 package router
 
 import (
+	"mongosteen/config"
 	"mongosteen/internal/controller"
 
 	"mongosteen/docs"
@@ -11,8 +12,9 @@ import (
 )
 
 func New() *gin.Engine {
-	docs.SwaggerInfo.Version = "1.0"
+	config.LoadAppConfig()
 	r := gin.Default()
+	docs.SwaggerInfo.Version = "1.0"
 
 	// Pint test
 	r.GET("/api/v1/ping", controller.Ping)
