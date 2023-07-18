@@ -50,7 +50,7 @@ WHERE
   AND
   code = $2
   AND
-  used_at = null
+  used_at is null
 ORDER BY created_at desc
 LIMIT 1
 `
