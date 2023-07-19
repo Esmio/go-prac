@@ -22,6 +22,9 @@ DELETE FROM users WHERE email = $1;
 -- name: DeleteUserByPhone :exec
 DELETE FROM users WHERE phone = $1;
 
+-- name: DeleteAllUsers :exec
+DELETE FROM users;
+
 -- name: CreateUser :one
 INSERT INTO users (email) VALUES ($1) RETURNING *;
 
