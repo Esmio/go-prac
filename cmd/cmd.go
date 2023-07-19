@@ -2,12 +2,17 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"mongosteen/internal/database"
 	"mongosteen/internal/email"
+	"mongosteen/internal/jwt_helper"
 	"mongosteen/internal/router"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func Run() {
@@ -36,10 +41,26 @@ func Run() {
 		},
 	}
 
-	createMigrationCmd := &cobra.Command{
+	createMgrtCmd := &cobra.Command{
 		Use: "create:migration",
 		Run: func(cmd *cobra.Command, args []string) {
 			database.CreateMigration(args[0])
+		},
+	}
+
+	generateHMACKeyCmd := &cobra.Command{
+		Use: "generateHMACKey",
+		Run: func(cmd *cobra.Command, args []string) {
+			bytes, _ := jwt_helper.GenerateHMACKey()
+			keyPath := viper.GetString("jwt.hmac.key_path")
+			dir := filepath.Dir(keyPath)
+			if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+				log.Fatalln(err)
+			}
+			if err := ioutil.WriteFile(keyPath, bytes, 0644); err != nil {
+				log.Fatalln(err)
+			}
+			fmt.Println("HMAC key saved to " + keyPath)
 		},
 	}
 
@@ -66,8 +87,8 @@ func Run() {
 	database.Connect()
 	defer database.Close()
 
-	rootCmd.AddCommand(srvCmd, dbCmd, emailCmd)
-	dbCmd.AddCommand(mgrtCmd, crudCmd, createMigrationCmd, mgrtDownCmd)
+	rootCmd.AddCommand(srvCmd, dbCmd, emailCmd, generateHMACKeyCmd)
+	dbCmd.AddCommand(mgrtCmd, crudCmd, createMgrtCmd, mgrtDownCmd)
 
 	rootCmd.Execute()
 }
