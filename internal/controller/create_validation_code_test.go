@@ -20,7 +20,8 @@ func TestCreateValidationCode(t *testing.T) {
 
 	database.Connect()
 
-	r.POST("/api/v1/validation_codes", CreateValidationCode)
+	vcc := ValidationCodeController{}
+	vcc.RegisterRoutes(r.Group("/api"))
 
 	viper.Set("email.smtp.host", "localhost")
 	viper.Set("email.smtp.port", "1025")
