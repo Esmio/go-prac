@@ -51,3 +51,17 @@ migrate -database "postgres://mongosteen:123456@localhost:5435/mongosteen_dev?ss
 ```bash
 go install github.com/mailhog/MailHog@v1.0.1 && MailHog
 ```
+
+# 测试覆盖率
+
+```bash
+go test -coverprofile=coverage.out ./...
+
+go tool cover -html=coverage.out -o coverage.html 
+```
+
+# 生成 struct
+
+```bash
+ctrl *SessionController mongosteen/internal/controller.Controller
+```

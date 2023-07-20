@@ -1,20 +1,27 @@
-package controller_test
+package controller
 
 import (
 	"context"
+	"mongosteen/config"
 	"mongosteen/internal/database"
-	"mongosteen/internal/router"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateValidationCode(t *testing.T) {
-	r := router.New()
+	r := gin.Default()
+	config.LoadAppConfig()
+
+	database.Connect()
+
+	r.POST("/api/v1/validation_codes", CreateValidationCode)
+
 	viper.Set("email.smtp.host", "localhost")
 	viper.Set("email.smtp.port", "1025")
 	email := "hy44jt@gmail.com"
