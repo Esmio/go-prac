@@ -4,3 +4,4 @@ mongosteen
 /config.yaml
 /config.toml
 coverage.*
+/coverage
