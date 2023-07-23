@@ -4,7 +4,6 @@ import (
 	"mongosteen/internal/database"
 	"mongosteen/internal/jwt_helper"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -51,18 +50,14 @@ func (ctrl *MeController) Get(c *gin.Context) {
 		c.String(401, "无效的JWT")
 		return
 	}
-	userID, ok := m["user_id"].(string)
+	userID, ok := m["user_id"].(float64)
 	if !ok {
 		c.String(401, "无效的JWT")
 		return
 	}
-	userIDint, err := strconv.Atoi(userID)
-	if err != nil {
-		c.String(401, "无效的JWT")
-		return
-	}
+	userIDint := int32(userID)
 	q := database.NewQuery()
-	user, err := q.FindUser(c, int32(userIDint))
+	user, err := q.FindUser(c, userIDint)
 	if err != nil {
 		c.String(401, "无效的JWT")
 		return
