@@ -5,3 +5,4 @@ mongosteen
 /config.toml
 coverage.*
 /coverage
+/docs
