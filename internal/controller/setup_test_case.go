@@ -4,8 +4,8 @@ import (
 	"context"
 	"mongosteen/config"
 	"mongosteen/config/queries"
+	"mongosteen/internal"
 	"mongosteen/internal/database"
-	"mongosteen/internal/middleware"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +19,8 @@ var (
 
 func setupTestCase(t *testing.T) func(t *testing.T) {
 	r = gin.Default()
-	r.Use(middleware.Me())
+	internal.InitRouter(r)
+
 	config.LoadAppConfig()
 	database.Connect()
 
