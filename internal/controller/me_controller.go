@@ -1,12 +1,10 @@
 package controller
 
 import (
-	"mongosteen/internal/database"
-	"mongosteen/internal/jwt_helper"
+	"mongosteen/config/queries"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type MeController struct {
@@ -38,42 +36,14 @@ func (ctrl *MeController) Update(c *gin.Context) {
 //	@Failure	401	{string}	JWT为空 | 无效的JWT
 //	@Router		/api/v1/me [get]
 func (ctrl *MeController) Get(c *gin.Context) {
-	auth := c.GetHeader("Authorization")
-	if len(auth) < 8 {
-		c.String(401, "JWT为空")
-		return
+	me, _ := c.Get("me")
+	if user, ok := me.(queries.User); !ok {
+		c.Status(http.StatusUnauthorized)
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"resource": user,
+		})
 	}
-	jwtString := auth[7:]
-	if len(jwtString) == 0 {
-		c.String(401, "JWT为空")
-		return
-	}
-	t, err := jwt_helper.Parse(jwtString)
-	if err != nil {
-		c.String(401, "无效的JWT")
-		return
-	}
-	m, ok := t.Claims.(jwt.MapClaims)
-	if !ok {
-		c.String(401, "无效的JWT")
-		return
-	}
-	userID, ok := m["user_id"].(float64)
-	if !ok {
-		c.String(401, "无效的JWT")
-		return
-	}
-	userIDint := int32(userID)
-	q := database.NewQuery()
-	user, err := q.FindUser(c, userIDint)
-	if err != nil {
-		c.String(401, "无效的JWT")
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"resource": user,
-	})
-
 }
 
 func (ctrl *MeController) GetPaged(c *gin.Context) {
