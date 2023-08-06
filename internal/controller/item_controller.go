@@ -24,7 +24,7 @@ func (ctrl *ItemController) Create(c *gin.Context) {
 		HappenedAt time.Time    `json:"happened_at" binding:"required"`
 		TagIds     []int32      `json:"tag_ids" binding:"required"`
 	}
-	if err := c.ShouldBind(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil {
 		c.String(422, "参数错误")
 	}
 
