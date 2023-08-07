@@ -1,1 +1,1 @@
-swag init && go build main.go && ./mongosteen server
+swag init && go build . && ./mongosteen server

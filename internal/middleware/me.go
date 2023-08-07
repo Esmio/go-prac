@@ -5,6 +5,7 @@ import (
 	"mongosteen/config/queries"
 	"mongosteen/internal/database"
 	"mongosteen/internal/jwt_helper"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -13,11 +14,11 @@ import (
 func Me(whitelist []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.Request.URL.Path
-		index := indexOf(whitelist, path)
-
-		if index != -1 {
-			c.Next()
-			return
+		for _, s := range whitelist {
+			if has := strings.HasPrefix(path, s); has {
+				c.Next()
+				return
+			}
 		}
 
 		user, err := getMe(c)
@@ -63,13 +64,4 @@ func getMe(c *gin.Context) (queries.User, error) {
 	}
 	return user, nil
 
-}
-
-func indexOf(strList []string, str string) int {
-	for i, s := range strList {
-		if s == str {
-			return i
-		}
-	}
-	return -1
 }

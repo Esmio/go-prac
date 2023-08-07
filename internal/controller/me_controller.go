@@ -33,7 +33,7 @@ func (ctrl *MeController) Update(c *gin.Context) {
 //	@Accept		json
 //	@Produce	json
 //	@Success	200	{object}	api.GetMeResponse
-//	@Failure	401	{string}	JWT为空 | 无效的JWT
+//	@Failure	401	{string}	JWT为空	|	无效的JWT
 //	@Router		/api/v1/me [get]
 func (ctrl *MeController) Get(c *gin.Context) {
 	me, _ := c.Get("me")
