@@ -14,4 +14,7 @@ func LoadAppConfig() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// 使用本地 Mailhog 拦截
+	viper.Set("email.smtp.host", "localhost")
+	viper.Set("email.smtp.port", "1025")
 }
