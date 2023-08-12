@@ -28,10 +28,13 @@ func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {
 //	@Accept		json
 //	@Produce	json
 //
-//	@Param		xxx	body		api.CreateItemRequest	true	"请求例子"
+//	@Param		amount		body		int						true	"金额（单位：分）"	example(100)
+//	@Param		kind		body		queries.Kind			true	"类型"
+//	@Param		happened_at	body		string					true	"发生时间"
+//	@Param		tag_ids		body		[]string				true	"标签ID列表"
 //
-//	@Success	200	{object}	api.CreateItemResponse	数据
-//	@Failure	422	{string}	string					数据
+//	@Success	200			{object}	api.CreateItemResponse	数据
+//	@Failure	422			{string}	string					数据
 //	@Router		/api/v1/items [post]
 func (ctrl *ItemController) Create(c *gin.Context) {
 	var body api.CreateItemRequest
@@ -70,6 +73,19 @@ func (ctrl *ItemController) Get(c *gin.Context) {
 	panic("not implemented") // TODO: Implement
 }
 
+// GetPagesItems godoc
+//
+//	@Summary	分页查找账目
+//	@Accept		json
+//	@Produce	json
+//
+//	@Param		page			query		int							false	"页码"	example(1)
+//	@Param		happened_after	query		string						false	"开始时间"	example(2000-01-01T01:01:01T+0800)
+//	@Param		happened_before	query		string						false	"结束时间"	example(2000-01-01T01:01:01T+0800)
+//
+//	@Success	200				{object}	api.GetPagesItemsResponse	数据
+//	@Failure	500
+//	@Router		/api/v1/items [get]
 func (ctrl *ItemController) GetPaged(c *gin.Context) {
 	var params api.GetPagedItemsRequest
 	pageStr, _ := c.Params.Get("page")
