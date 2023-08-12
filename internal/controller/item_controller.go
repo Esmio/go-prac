@@ -28,6 +28,8 @@ func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {
 //	@Accept		json
 //	@Produce	json
 //
+//	@Security	Bearer
+//
 //	@Param		amount		body		int						true	"金额（单位：分）"	example(100)
 //	@Param		kind		body		queries.Kind			true	"类型"
 //	@Param		happened_at	body		string					true	"发生时间"
@@ -78,6 +80,8 @@ func (ctrl *ItemController) Get(c *gin.Context) {
 //	@Summary	分页查找账目
 //	@Accept		json
 //	@Produce	json
+//
+//	@Security	Bearer
 //
 //	@Param		page			query		int							false	"页码"	example(1)
 //	@Param		happened_after	query		string						false	"开始时间"	example(2000-01-01T01:01:01T+0800)
