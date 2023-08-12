@@ -69,6 +69,15 @@ func (q *Queries) CreateItem(ctx context.Context, arg CreateItemParams) (Item, e
 	return i, err
 }
 
+const deleteAllItems = `-- name: DeleteAllItems :exec
+DELETE FROM items
+`
+
+func (q *Queries) DeleteAllItems(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, deleteAllItems)
+	return err
+}
+
 const listItems = `-- name: ListItems :many
 SELECT id, user_id, amount, tag_ids, kind, happened_at, created_at, updated_at FROM items
 ORDER BY happened_at DESC

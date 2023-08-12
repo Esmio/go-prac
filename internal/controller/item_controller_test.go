@@ -2,12 +2,14 @@ package controller
 
 import (
 	"encoding/json"
+	"mongosteen/api"
 	"mongosteen/config/queries"
 	"mongosteen/internal/jwt_helper"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -70,4 +72,39 @@ func TestCreateItemWithError(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 422, w.Code)
+}
+
+func TestGetPagesItems(t *testing.T) {
+	done := setupTestCase(t)
+	defer done(t)
+
+	ctrl := ItemController{}
+	ctrl.RegisterRoutes(r.Group("/api"))
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/items", nil)
+
+	u, _ := q.CreateUser(c, "1@qq.com")
+
+	for i := 0; i < int(ctrl.PerPage)*2; i++ {
+		if _, err := q.CreateItem(c, queries.CreateItemParams{
+			UserID:     u.ID,
+			Amount:     10000,
+			Kind:       "expenses",
+			TagIds:     []int32{1},
+			HappenedAt: time.Now(),
+		}); err != nil {
+			t.Error(err)
+		}
+	}
+	SignIn(t, u.ID, req)
+	r.ServeHTTP(w, req)
+	assert.Equal(t, 200, w.Code)
+	body := w.Body.String()
+	var j api.GetPagesItemsResponse
+	if err := json.Unmarshal([]byte(body), &j); err != nil {
+		t.Error("json.Unmarshal fail", err)
+	}
+	assert.Equal(t, ctrl.PerPage, int32(len(j.Resources)))
+
 }

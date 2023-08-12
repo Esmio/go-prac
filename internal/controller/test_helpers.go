@@ -6,6 +6,8 @@ import (
 	"mongosteen/config/queries"
 	"mongosteen/internal"
 	"mongosteen/internal/database"
+	"mongosteen/internal/jwt_helper"
+	"net/http"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +31,17 @@ func setupTestCase(t *testing.T) func(t *testing.T) {
 	if err := q.DeleteAllUsers(c); err != nil {
 		t.Fatal(err)
 	}
+	if err := q.DeleteAllItems(c); err != nil {
+		t.Fatal(err)
+	}
 	return func(t *testing.T) {
 		database.Close()
+	}
+}
+
+func SignIn(t *testing.T, userID int32, req *http.Request) {
+	jwtString, _ := jwt_helper.GenerateJWT(int(userID))
+	req.Header = http.Header{
+		"Authorization": []string{"Bearer " + jwtString},
 	}
 }
