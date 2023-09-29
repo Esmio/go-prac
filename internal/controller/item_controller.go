@@ -20,7 +20,7 @@ func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {
 	v1 := rg.Group("/v1")
 	v1.POST("/items", ctrl.Create)
 	v1.GET("/items", ctrl.GetPaged)
-	v1.GET("/itmes/balance", ctrl.GetBalance)
+	v1.GET("/items/balance", ctrl.GetBalance)
 	ctrl.PerPage = 10
 }
 
