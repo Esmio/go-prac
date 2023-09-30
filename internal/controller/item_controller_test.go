@@ -99,7 +99,7 @@ func TestGetPagesItems(t *testing.T) {
 			t.Error(err)
 		}
 	}
-	SignIn(t, u.ID, req)
+	signIn(t, u.ID, req)
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 200, w.Code)
 	body := w.Body.String()
@@ -133,7 +133,7 @@ func TestGetBalance(t *testing.T) {
 			t.Error(err)
 		}
 	}
-	SignIn(t, u.ID, req)
+	signIn(t, u.ID, req)
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 200, w.Code)
 	body := w.Body.String()
@@ -204,7 +204,7 @@ func TestGetBalanceWithTime(t *testing.T) {
 		}
 	}
 
-	SignIn(t, u.ID, req)
+	signIn(t, u.ID, req)
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 200, w.Code)
 	body := w.Body.String()

@@ -39,7 +39,7 @@ func setupTestCase(t *testing.T) func(t *testing.T) {
 	}
 }
 
-func SignIn(t *testing.T, userID int32, req *http.Request) {
+func signIn(t *testing.T, userID int32, req *http.Request) {
 	jwtString, _ := jwt_helper.GenerateJWT(int(userID))
 	req.Header = http.Header{
 		"Authorization": []string{"Bearer " + jwtString},

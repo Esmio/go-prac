@@ -21,6 +21,7 @@ func (ctrl *TagController) Create(c *gin.Context) {
 	var body api.CreateTagRequest
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.String(422, "参数错误")
+		return
 	}
 
 	me, _ := c.Get("me")

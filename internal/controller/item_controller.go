@@ -45,6 +45,7 @@ func (ctrl *ItemController) Create(c *gin.Context) {
 	var body api.CreateItemRequest
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.String(422, "参数错误")
+		return
 	}
 
 	me, _ := c.Get("me")
