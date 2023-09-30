@@ -1,6 +1,13 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"mongosteen/api"
+	"mongosteen/config/queries"
+	"mongosteen/internal/database"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 type TagController struct {
 }
@@ -11,7 +18,27 @@ func (ctrl *TagController) RegisterRoutes(rg *gin.RouterGroup) {
 }
 
 func (ctrl *TagController) Create(c *gin.Context) {
-	panic("not implemented") // TODO: Implement
+	var body api.CreateTagRequest
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.String(422, "参数错误")
+	}
+
+	me, _ := c.Get("me")
+	user, _ := me.(queries.User)
+	q := database.NewQuery()
+	tag, err := q.CreateTag(c, queries.CreateTagParams{
+		UserID: user.ID,
+		Name:   body.Name,
+		Kind:   body.Kind,
+		Sign:   body.Sign,
+	})
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"resource": tag,
+	})
 }
 
 func (ctrl *TagController) Destroy(c *gin.Context) {

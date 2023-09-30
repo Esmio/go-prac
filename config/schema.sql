@@ -17,6 +17,7 @@ CREATE TABLE validation_codes (
 );
 
 CREATE TYPE kind as ENUM ('expenses', 'in_come');
+
 CREATE TABLE items (
     id BIGSERIAL PRIMARY KEY,
     user_id SERIAL NOT NULL,
@@ -27,3 +28,14 @@ CREATE TABLE items (
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS tags (
+  id BIGSERIAL PRIMARY KEY,
+  user_id SERIAL NOT NULL,
+  name varchar(50) NOT NULL,
+  sign varchar(10) NOT NULL,
+  kind kind NOT NULL,
+  deleteed_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP NOT NULL DEFAULT now()
+)
