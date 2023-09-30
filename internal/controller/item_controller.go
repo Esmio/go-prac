@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nav-inc/datetime"
 )
 
 type ItemController struct {
@@ -79,15 +80,17 @@ func (ctrl *ItemController) Get(c *gin.Context) {
 
 func (ctrl *ItemController) GetBalance(c *gin.Context) {
 	// 获取参数
-	happenedAfterString, _ := c.Params.Get("happended_after")
-	happendedBeforeString, _ := c.Params.Get("happened_before")
-	happenedAfter, err := time.Parse(time.RFC3339, happenedAfterString)
+
+	query := c.Request.URL.Query()
+	happenedAfterString := query["happened_after"][0]
+	happenedBeforeString := query["happened_before"][0]
+	happenedAfter, err := datetime.Parse(happenedAfterString, time.Local)
 
 	if err != nil {
 		happenedAfter = time.Now().AddDate(-100, 0, 0)
 	}
 
-	happenedBefore, err := time.Parse(time.RFC3339, happendedBeforeString)
+	happenedBefore, err := datetime.Parse(happenedBeforeString, time.Local)
 
 	if err != nil {
 		happenedBefore = time.Now().AddDate(1, 0, 0)
@@ -139,13 +142,13 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 	}
 	happenedBefore, has := c.Params.Get("happened_before")
 	if has {
-		if t, err := time.Parse(time.RFC3339, happenedBefore); err == nil {
+		if t, err := datetime.Parse(happenedBefore, time.Local); err == nil {
 			params.HappenedBefore = t
 		}
 	}
 	happenedAfter, has := c.Params.Get("happened_after")
 	if has {
-		if t, err := time.Parse(time.RFC3339, happenedAfter); err == nil {
+		if t, err := datetime.Parse(happenedAfter, time.Local); err == nil {
 			params.HappenedAfter = t
 		}
 	}
