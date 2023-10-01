@@ -1,7 +1,10 @@
 package controller
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
+	"mongosteen/api"
 	"mongosteen/config/queries"
 	"net/http"
 	"net/http/httptest"
@@ -41,6 +44,48 @@ func TestCreateTag(t *testing.T) {
 		t.Error("json.Unmarshal fail", err)
 	}
 	assert.Equal(t, u.ID, j.Resource.UserID)
-	assert.Equal(t, "通勤", j.Resource.Name)
+	assert.Equal(t, "通勤", j.Resource.Sign)
+	assert.Nil(t, j.Resource.DeletedAt)
+}
+
+func TestUpdateTag(t *testing.T) {
+	done := setupTestCase(t)
+	defer done(t)
+
+	ic := TagController{}
+	ic.RegisterRoutes(r.Group("/api"))
+
+	u, _ := q.CreateUser(c, "1@qq.com")
+	tag, err := q.CreateTag(context.Background(), queries.CreateTagParams{
+		UserID: u.ID,
+		Name:   "通勤",
+		Sign:   "🚌",
+		Kind:   queries.KindExpenses,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("PATCH",
+		fmt.Sprintf("/api/v1/tags/%d", tag.ID), strings.NewReader(`{
+		"name": "吃饭"
+	}`))
+
+	signIn(t, u.ID, req)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+
+	body := w.Body.String()
+	var j api.UpdateTagResponse
+	err = json.Unmarshal([]byte(body), &j)
+	if err != nil {
+		t.Error("json.Unmarshal fail", err)
+	}
+	assert.Equal(t, u.ID, j.Resource.UserID)
+	assert.Equal(t, "吃饭", j.Resource.Name)
+	assert.Equal(t, "🚌", j.Resource.Name)
 	assert.Nil(t, j.Resource.DeletedAt)
 }
