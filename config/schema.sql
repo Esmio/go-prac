@@ -16,25 +16,23 @@ CREATE TABLE validation_codes (
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TYPE kind as ENUM ('expenses', 'in_come');
-
 CREATE TABLE items (
-    id BIGSERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     user_id SERIAL NOT NULL,
     amount INTEGER NOT NULL,
     tag_ids INTEGER[] NOT NULL,
-    kind kind NOT NULL,
+    kind VARCHAR(100) NOT NULL,
     happened_at TIMESTAMP NOT NULL DEFAULT now(),
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS tags (
-  id BIGSERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   user_id SERIAL NOT NULL,
   name varchar(50) NOT NULL,
   sign varchar(10) NOT NULL,
-  kind kind NOT NULL,
+  kind VARCHAR(100) NOT NULL,
   deleted_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT now(),
   updated_at TIMESTAMP NOT NULL DEFAULT now()

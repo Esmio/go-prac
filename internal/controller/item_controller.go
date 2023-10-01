@@ -34,7 +34,7 @@ func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {
 //	@Security	Bearer
 //
 //	@Param		amount		body		int						true	"金额（单位：分）"	example(100)
-//	@Param		kind		body		queries.Kind			true	"类型"
+//	@Param		kind		body			string			true	"类型"
 //	@Param		happened_at	body		string					true	"发生时间"
 //	@Param		tag_ids		body		[]string				true	"标签ID列表"
 //
@@ -110,7 +110,7 @@ func (ctrl *ItemController) GetBalance(c *gin.Context) {
 
 	var r api.GetBalanceResponse
 	for _, item := range items {
-		if item.Kind == queries.KindInCome {
+		if item.Kind == "in_come" {
 			r.Income += int(item.Amount)
 		} else {
 			r.Expenses += int(item.Amount)
