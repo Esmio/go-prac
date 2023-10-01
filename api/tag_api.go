@@ -1,11 +1,15 @@
 package api
 
-import "mongosteen/config/queries"
+import (
+	"mongosteen/config"
+	"mongosteen/config/queries"
+)
 
 type CreateTagRequest struct {
-	Name string `json:"name" binding:"required"`
-	Sign string `json:"sign" binding:"required"`
-	Kind string `json:"kind" binding:"required"`
+	Name string              `json:"name" binding:"required"`
+	Sign string              `json:"sign" binding:"required"`
+	Kind string              `json:"kind" binding:"required"`
+	X    config.MyNullString `json:"x"`
 }
 
 type UpdateTagRequest struct {

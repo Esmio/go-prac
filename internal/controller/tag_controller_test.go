@@ -25,7 +25,8 @@ func TestCreateTag(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/v1/tags", strings.NewReader(`{
 		"name": "通勤",
 		"kind": "expenses",
-		"sign": "🚌"
+		"sign": "🚌",
+		"x": "simon"
 	}`))
 
 	u, _ := q.CreateUser(c, "1@qq.com")
@@ -70,7 +71,8 @@ func TestUpdateTag(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("PATCH",
 		fmt.Sprintf("/api/v1/tags/%d", tag.ID), strings.NewReader(`{
-		"name": "吃饭"
+		"name": "吃饭",
+		"sign": null
 	}`))
 
 	signIn(t, u.ID, req)
