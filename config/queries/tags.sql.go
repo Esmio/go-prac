@@ -20,7 +20,7 @@ INSERT INTO tags (
   $2, 
   $3, 
   $4
-) RETURNING id, user_id, name, sign, kind, deleteed_at, created_at, updated_at
+) RETURNING id, user_id, name, sign, kind, deleted_at, created_at, updated_at
 `
 
 type CreateTagParams struct {
@@ -44,7 +44,7 @@ func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, erro
 		&i.Name,
 		&i.Sign,
 		&i.Kind,
-		&i.DeleteedAt,
+		&i.DeletedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
