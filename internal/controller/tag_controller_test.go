@@ -86,6 +86,6 @@ func TestUpdateTag(t *testing.T) {
 	}
 	assert.Equal(t, u.ID, j.Resource.UserID)
 	assert.Equal(t, "吃饭", j.Resource.Name)
-	assert.Equal(t, "🚌", j.Resource.Name)
+	assert.Equal(t, "🚌", j.Resource.Sign)
 	assert.Nil(t, j.Resource.DeletedAt)
 }
