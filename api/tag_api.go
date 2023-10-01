@@ -8,6 +8,10 @@ type CreateTagRequest struct {
 	Kind queries.Kind `json:"kind" binding:"required"`
 }
 
+type UpdateTagRequest CreateTagRequest
+
 type CreateTagResponse struct {
 	Resource queries.Tag `json:"resource"`
 }
+
+type UpdateTagResponse CreateTagResponse
