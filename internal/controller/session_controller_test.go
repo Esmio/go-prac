@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"log"
+	"mongosteen/api"
 	"mongosteen/config/queries"
 	"net/http"
 	"net/http/httptest"
@@ -44,10 +45,8 @@ func TestCreateSession(t *testing.T) {
 		strings.NewReader(string(bytes)),
 	)
 	r.ServeHTTP(w, req)
-	var responseBody struct {
-		JWT    string `json:"jwt"`
-		UserID int32  `json:"userId"`
-	}
+
+	var responseBody api.CreateSessionResponse
 
 	if err := json.Unmarshal(w.Body.Bytes(), &responseBody); err != nil {
 		t.Errorf("jwt is not a string")
