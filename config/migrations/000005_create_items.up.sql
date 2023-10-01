@@ -1,5 +1,5 @@
 BEGIN;
-CREATE TYPE kind as ENUM ('expenses', 'in_come');
+CREATE TYPE kind as ENUM ('expenses', 'in_come', '');
 CREATE TABLE items (
     id BIGSERIAL PRIMARY KEY,
     user_id SERIAL NOT NULL,
