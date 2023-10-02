@@ -51,6 +51,7 @@ func (ctrl *TagController) Create(c *gin.Context) {
 		Sign:   body.Sign,
 		X:      body.X,
 	})
+
 	if err != nil {
 		c.String(500, err.Error())
 		return

@@ -8,7 +8,7 @@ package queries
 import (
 	"context"
 
-	"mongosteen/config"
+	null_v4 "gopkg.in/guregu/null.v4"
 )
 
 const createTag = `-- name: CreateTag :one
@@ -28,11 +28,11 @@ INSERT INTO tags (
 `
 
 type CreateTagParams struct {
-	UserID int32               `json:"user_id"`
-	Name   string              `json:"name"`
-	Sign   string              `json:"sign"`
-	Kind   string              `json:"kind"`
-	X      config.MyNullString `json:"x"`
+	UserID int32          `json:"user_id"`
+	Name   string         `json:"name"`
+	Sign   string         `json:"sign"`
+	Kind   string         `json:"kind"`
+	X      null_v4.String `json:"x"`
 }
 
 func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error) {
