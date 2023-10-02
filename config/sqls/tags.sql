@@ -22,3 +22,12 @@ SET
   kind = CASE WHEN @kind::varchar = '' THEN kind ELSE @kind END
 WHERE id = @id
 RETURNING *;
+
+-- name: DeleteTag :exec
+UPDATE tags
+SET deleted_at = now()
+WHERE id = @id;
+
+-- name: FindTag :one
+SELECT * FROM tags
+WHERE id = @id AND deleted_at IS NULL;

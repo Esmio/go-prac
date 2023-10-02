@@ -26,7 +26,6 @@ func TestCreateTag(t *testing.T) {
 		"name": "通勤",
 		"kind": "expenses",
 		"sign": "🚌",
-		"x": "simon"
 	}`))
 
 	u, _ := q.CreateUser(c, "1@qq.com")
@@ -46,8 +45,6 @@ func TestCreateTag(t *testing.T) {
 	}
 	assert.Equal(t, u.ID, j.Resource.UserID)
 	assert.Equal(t, "通勤", j.Resource.Name)
-	assert.Equal(t, "simon", j.Resource.X.String)
-	assert.Equal(t, true, j.Resource.X.Valid)
 	assert.Nil(t, j.Resource.DeletedAt)
 }
 
@@ -93,4 +90,39 @@ func TestUpdateTag(t *testing.T) {
 	assert.Equal(t, "🚌", j.Resource.Sign)
 	assert.Equal(t, "expenses", j.Resource.Kind)
 	assert.Nil(t, j.Resource.DeletedAt)
+}
+
+func TestDeleteTag(t *testing.T) {
+	done := setupTestCase(t)
+	defer done(t)
+
+	ic := TagController{}
+	ic.RegisterRoutes(r.Group("/api"))
+
+	u, _ := q.CreateUser(c, "1@qq.com")
+	tag, err := q.CreateTag(context.Background(), queries.CreateTagParams{
+		UserID: u.ID,
+		Name:   "通勤",
+		Sign:   "🚌",
+		Kind:   "expenses",
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(
+		"DELETE",
+		fmt.Sprintf("/api/v1/tags/%d", tag.ID),
+		nil,
+	)
+
+	signIn(t, u.ID, req)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	q.FindTag(c, tag.ID)
+	_, err = q.FindTag(c, tag.ID)
+	assert.Error(t, err)
 }
