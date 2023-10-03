@@ -3,14 +3,12 @@ INSERT INTO tags (
   user_id, 
   name,
   sign,
-  kind,
-  x
+  kind
 ) VALUES (
   $1, 
   $2, 
   $3, 
-  $4,
-  $5
+  $4
 ) RETURNING *;
 
 -- name: UpdateTag :one
@@ -31,3 +29,10 @@ WHERE id = @id;
 -- name: FindTag :one
 SELECT * FROM tags
 WHERE id = @id AND deleted_at IS NULL;
+
+-- name: ListTags :many
+SELECT * FROM tags
+WHERE kind = @kind AND user_id = @user_id AND deleted_at IS NULL
+ORDER BY created_at DESC
+OFFSET $1
+LIMIT $2;

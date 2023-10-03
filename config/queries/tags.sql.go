@@ -7,8 +7,6 @@ package queries
 
 import (
 	"context"
-
-	null_v4 "gopkg.in/guregu/null.v4"
 )
 
 const createTag = `-- name: CreateTag :one
@@ -16,23 +14,20 @@ INSERT INTO tags (
   user_id, 
   name,
   sign,
-  kind,
-  x
+  kind
 ) VALUES (
   $1, 
   $2, 
   $3, 
-  $4,
-  $5
-) RETURNING id, user_id, name, sign, kind, deleted_at, x, created_at, updated_at
+  $4
+) RETURNING id, user_id, name, sign, kind, deleted_at, created_at, updated_at
 `
 
 type CreateTagParams struct {
-	UserID int32          `json:"user_id"`
-	Name   string         `json:"name"`
-	Sign   string         `json:"sign"`
-	Kind   string         `json:"kind"`
-	X      null_v4.String `json:"x"`
+	UserID int32  `json:"user_id"`
+	Name   string `json:"name"`
+	Sign   string `json:"sign"`
+	Kind   string `json:"kind"`
 }
 
 func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error) {
@@ -41,7 +36,6 @@ func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, erro
 		arg.Name,
 		arg.Sign,
 		arg.Kind,
-		arg.X,
 	)
 	var i Tag
 	err := row.Scan(
@@ -51,7 +45,6 @@ func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, erro
 		&i.Sign,
 		&i.Kind,
 		&i.DeletedAt,
-		&i.X,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -70,7 +63,7 @@ func (q *Queries) DeleteTag(ctx context.Context, id int32) error {
 }
 
 const findTag = `-- name: FindTag :one
-SELECT id, user_id, name, sign, kind, deleted_at, x, created_at, updated_at FROM tags
+SELECT id, user_id, name, sign, kind, deleted_at, created_at, updated_at FROM tags
 WHERE id = $1 AND deleted_at IS NULL
 `
 
@@ -84,11 +77,62 @@ func (q *Queries) FindTag(ctx context.Context, id int32) (Tag, error) {
 		&i.Sign,
 		&i.Kind,
 		&i.DeletedAt,
-		&i.X,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const listTags = `-- name: ListTags :many
+SELECT id, user_id, name, sign, kind, deleted_at, created_at, updated_at FROM tags
+WHERE kind = $3 AND user_id = $4 AND deleted_at IS NULL
+ORDER BY created_at DESC
+OFFSET $1
+LIMIT $2
+`
+
+type ListTagsParams struct {
+	Offset int32  `json:"offset"`
+	Limit  int32  `json:"limit"`
+	Kind   string `json:"kind"`
+	UserID int32  `json:"user_id"`
+}
+
+func (q *Queries) ListTags(ctx context.Context, arg ListTagsParams) ([]Tag, error) {
+	rows, err := q.db.QueryContext(ctx, listTags,
+		arg.Offset,
+		arg.Limit,
+		arg.Kind,
+		arg.UserID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Tag
+	for rows.Next() {
+		var i Tag
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Sign,
+			&i.Kind,
+			&i.DeletedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateTag = `-- name: UpdateTag :one
@@ -99,7 +143,7 @@ SET
   sign = CASE WHEN $3::varchar = '' THEN sign ELSE $3 END,
   kind = CASE WHEN $4::varchar = '' THEN kind ELSE $4 END
 WHERE id = $5
-RETURNING id, user_id, name, sign, kind, deleted_at, x, created_at, updated_at
+RETURNING id, user_id, name, sign, kind, deleted_at, created_at, updated_at
 `
 
 type UpdateTagParams struct {
@@ -126,7 +170,6 @@ func (q *Queries) UpdateTag(ctx context.Context, arg UpdateTagParams) (Tag, erro
 		&i.Sign,
 		&i.Kind,
 		&i.DeletedAt,
-		&i.X,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

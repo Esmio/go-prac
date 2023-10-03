@@ -2,16 +2,22 @@ package api
 
 import (
 	"mongosteen/config/queries"
-
-	"gopkg.in/guregu/null.v4"
 )
 
+type GetPagedTagsRequest struct {
+	Page int32  `josn:"page"`
+	Kind string `json:"kind"`
+}
+
+type GetPagesTagsResponse struct {
+	Resources []queries.Tag `json:"resources" `
+	Pager     Pager         `json:"pager"`
+}
+
 type CreateTagRequest struct {
-	Name string      `json:"name" binding:"required"`
-	Sign string      `json:"sign" binding:"required"`
-	Kind string      `json:"kind" binding:"required"`
-	X    null.String `json:"x"`
-	// X    config.MyNullString `json:"x"`
+	Name string `json:"name" binding:"required"`
+	Sign string `json:"sign" binding:"required"`
+	Kind string `json:"kind" binding:"required"`
 }
 
 type UpdateTagRequest struct {
