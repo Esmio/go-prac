@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"log"
 	"mongosteen/api"
 	"mongosteen/config/queries"
@@ -189,16 +188,18 @@ func (ctrl *ItemController) GetSummary(c *gin.Context) {
 	var query api.GetSummaryRequest
 
 	if err := c.BindQuery(&query); err != nil {
-		errMsg := ""
+		r := api.NewErrorResponse()
 		switch x:= err.(type) {
 		case validator.ValidationErrors:
 			for _, ve := range x {
-				x1 := ve.Tag()
-				x2 := ve.Field()
-				fmt.Println(x1, x2)
-				errMsg += fmt.Sprintf("%s %s.", x2, x1)
+				tag := ve.Tag()
+				field := ve.Field()
+				if r.Errors[field] == nil {
+					r.Errors[field] = []string{}
+				}
+				r.Errors[field] = append(r.Errors[field], tag)
 			}
-			c.Writer.WriteString(errMsg)
+			c.JSON(http.StatusUnprocessableEntity, r)
 		default:
 			c.Status(http.StatusInternalServerError)
 		}
