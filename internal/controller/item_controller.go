@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"log"
 	"mongosteen/api"
 	"mongosteen/config/queries"
@@ -8,6 +9,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nav-inc/datetime"
@@ -186,7 +189,19 @@ func (ctrl *ItemController) GetSummary(c *gin.Context) {
 	var query api.GetSummaryRequest
 
 	if err := c.BindQuery(&query); err != nil {
-		c.String(http.StatusBadRequest, "参数错误")
+		errMsg := ""
+		switch x:= err.(type) {
+		case validator.ValidationErrors:
+			for _, ve := range x {
+				x1 := ve.Tag()
+				x2 := ve.Field()
+				fmt.Println(x1, x2)
+				errMsg += fmt.Sprintf("%s %s.", x2, x1)
+			}
+			c.Writer.WriteString(errMsg)
+		default:
+			c.Status(http.StatusInternalServerError)
+		}
 		return
 	}
 
