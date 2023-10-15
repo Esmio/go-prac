@@ -34,7 +34,7 @@ func (ctrl *TagController) RegisterRoutes(rg *gin.RouterGroup) {
 //
 //	@Param		name		body		string						true	"标签"	SchemaExample(通勤)
 //	@Param		sign		body		string						true	"符号"	SchemaExample(🚌)
-//	@Param		kind		body		queries.Kind			true	"类型"
+//	@Param		kind		body		string						true	"类型"
 //
 //	@Success	200			{object}	api.CreateTagResponse	数据
 //	@Failure	422			{string}	string					数据

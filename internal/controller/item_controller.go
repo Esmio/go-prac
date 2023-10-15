@@ -129,7 +129,7 @@ func (ctrl *ItemController) GetBalance(c *gin.Context) {
 //
 //	@Security	Bearer
 //
-//	@Param		page			query		int							false	"页码"	example(1)
+//	@Param		page			query		int											false	"页码"	example(1)
 //	@Param		happened_after	query		string						false	"开始时间"	example(2000-01-01T01:01:01T+0800)
 //	@Param		happened_before	query		string						false	"结束时间"	example(2000-01-01T01:01:01T+0800)
 //
@@ -185,11 +185,10 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 func (ctrl *ItemController) GetSummary(c *gin.Context) {
 	var query api.GetSummaryRequest
 
-	err := c.BindQuery(&query)
-
-	if err != nil {
+	if err := c.BindQuery(&query); err != nil {
 		c.String(http.StatusBadRequest, "参数错误")
 		return
 	}
+
 	c.Status(200)
 }
