@@ -27,6 +27,12 @@ type GetPagesItemsResponse struct {
 	Pager     Pager          `json:"pager"`
 }
 
+type GetBalanceResponse struct {
+	Income   int `json:"income"`
+	Expenses int `json:"expenses"`
+	Balance  int `json:"balance"`
+}
+
 type GetSummaryRequest struct {
 	HappenedAfter  time.Time `form:"happened_after" binding:"required"`
 	HappenedBefore time.Time `form:"happened_before" binding:"required"`
@@ -34,8 +40,12 @@ type GetSummaryRequest struct {
 	GroupBy        string    `form:"group_by" binding:"required"`
 }
 
-type GetBalanceResponse struct {
-	Income   int `json:"income"`
-	Expenses int `json:"expenses"`
-	Balance  int `json:"balance"`
+type GetSummaryResponse struct {
+	Groups 	[]SummaryGroupByHappenedAt 	`json:"groups"`
+	Total		int													`json:"total"` 
+}
+
+type SummaryGroupByHappenedAt struct {
+	HappenedAt 	string 		`json:"happened_at"`
+	Amount 		  int 			`json:"amount"`
 }
